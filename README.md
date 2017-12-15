@@ -81,7 +81,7 @@ An endpoint for recipe search functionality **MUST** also be implemented. The HT
 
 Additionally, recipes can be rated many times from 1-5 and a rating is never overwritten.
 
-If you need a more visual idea of how the data should be represented, [take a look at one of our recipe cards](https://ddw4dkk7s1lkt.cloudfront.net/card/hdp-chicken-with-farro-75b306ff.pdf?t=20160927003916).
+If you need a more visual idea of how the data would be represented, [take a look at one of our recipe cards](https://ddw4dkk7s1lkt.cloudfront.net/card/hdp-chicken-with-farro-75b306ff.pdf?t=20160927003916). We are not asking you to implement the whole thing, this is just an example, only implement recipes and ratings as they are described in this document.
 
 ## Evaluation criteria
 
