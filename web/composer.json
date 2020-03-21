@@ -1,24 +1,26 @@
 {
-    "name": "hellofreshdevtests/renatoaraujo-api-test",
-    "license": "proprietary",
-    "type": "project",
-    "authors": [
-        {
-            "name": "Renato Rodrigues de Araujo",
-            "email": "renato.r.araujo@gmail.com"
-        }
-    ],
-    "require": {},
-    "require-dev": {
-        "phpunit/phpunit": "^7",
-        "ramsey/uuid": "^3.9"
-    },
-    "autoload": {
-        "psr-4": {
-            "HelloFresh\\": "src/"
-        }
-    },
-    "config": {
-        "bin-dir": "bin/"
+  "name": "hellofreshdevtests/renatoaraujo-api-test",
+  "license": "proprietary",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Renato Rodrigues de Araujo",
+      "email": "renato.r.araujo@gmail.com"
     }
+  ],
+  "require": {
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7",
+    "ramsey/uuid": "^3.9"
+  },
+  "autoload": {
+    "psr-4": {
+      "HelloFresh\\": "src/"
+    }
+  },
+  "config": {
+    "bin-dir": "bin/"
+  }
 }
