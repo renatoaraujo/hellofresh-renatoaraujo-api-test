@@ -16,3 +16,7 @@ shutdown:
 .PHONY: vendor
 vendor:
 	docker-compose exec php composer install -d ./web
+
+.PHONY: test
+test:
+	docker-compose exec php ./web/bin/phpunit --bootstrap ./web/vendor/autoload.php --testdox web/src/Domain/Tests

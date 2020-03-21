@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace HelloFresh\Domain;
 
 use HelloFresh\Domain\Exception\InvalidUuidStringException;
+use Ramsey\Uuid\Uuid;
 
 final class RecipeId
 {
@@ -18,9 +19,7 @@ final class RecipeId
     {
         $instance = new self();
 
-        $pattern = '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$';
-
-        if (!preg_match('/' . $pattern . '/D', $recipeId) || $recipeId === '00000000-0000-0000-0000-000000000000') {
+        if (Uuid::isValid($recipeId) !== true) {
             throw InvalidUuidStringException::withUuidString($recipeId);
         }
 
@@ -37,14 +36,7 @@ final class RecipeId
     public static function generate(): RecipeId
     {
         $instance = new self();
-
-        $instance->uuid = implode('-', [
-            \bin2hex(\random_bytes(4)),
-            \bin2hex(\random_bytes(2)),
-            \bin2hex(\chr((\ord(\random_bytes(1)) & 0x0F) | 0x40)) . \bin2hex(\random_bytes(1)),
-            \bin2hex(\chr((\ord(\random_bytes(1)) & 0x3F) | 0x80)) . \bin2hex(\random_bytes(1)),
-            \bin2hex(\random_bytes(6)),
-        ]);
+        $instance->uuid = Uuid::uuid4()->toString();
 
         return $instance;
     }
