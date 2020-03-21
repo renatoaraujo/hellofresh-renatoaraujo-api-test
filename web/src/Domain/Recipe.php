@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace HelloFresh\Domain;
 
 use HelloFresh\Domain\Event\NewRecipeWasRegistered;
+use HelloFresh\Domain\Event\RecipeWasDeleted;
 use HelloFresh\Domain\Event\RecipeWasUpdated;
 
 final class Recipe
@@ -134,5 +135,12 @@ final class Recipe
         $this->preparationTime = $event->preparationTime();
         $this->difficulty = $event->difficulty();
         $this->isVegetarian = $event->isVegetarian();
+    }
+
+    public function delete(): void
+    {
+        $this->record(RecipeWasDeleted::with([
+            'recipe_id' => $this->recipeId,
+        ]));
     }
 }

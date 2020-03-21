@@ -5,6 +5,7 @@ namespace HelloFresh\Domain\Tests;
 
 use HelloFresh\Domain\Event\NewRecipeWasRegistered;
 use HelloFresh\Domain\Difficulty;
+use HelloFresh\Domain\Event\RecipeWasDeleted;
 use HelloFresh\Domain\Event\RecipeWasUpdated;
 use HelloFresh\Domain\Name;
 use HelloFresh\Domain\PreparationTime;
@@ -128,5 +129,32 @@ final class RecipeTest extends TestCase
 
         $recordedEvents = $recipe->getRecordedEvents();
         $this->assertCount(0, $recordedEvents);
+    }
+
+    public function testRecipeCanRecordRecipeWasDeletedEvent(): void
+    {
+        $recipeId = RecipeId::generate();
+        $recipe = Recipe::fromPayload([
+            'recipe_id' => $recipeId,
+            'name' => Name::fromString('Herby Pan-Seared Chicken'),
+            'preparation_time' => PreparationTime::fromInteger(30),
+            'difficulty' => Difficulty::fromInteger(2),
+            'is_vegetarian' => false,
+            'rate' => 0,
+        ]);
+
+        $this->assertInstanceOf(Recipe::class, $recipe);
+
+        $recipe->delete();
+
+        $recordedEvents = $recipe->getRecordedEvents();
+        $this->assertIsArray($recordedEvents);
+        $this->assertArrayHasKey(0, $recordedEvents);
+        $this->assertCount(1, $recordedEvents);
+        $this->assertInstanceOf(RecipeWasDeleted::class, $recordedEvents[0]);
+
+        $recipe->clearRecordedEvents();
+        $emptyRecordedEvents = $recipe->getRecordedEvents();
+        $this->assertCount(0, $emptyRecordedEvents);
     }
 }
