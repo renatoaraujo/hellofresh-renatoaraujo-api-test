@@ -4,11 +4,13 @@ declare(strict_types=1);
 namespace HelloFresh\Domain\Tests;
 
 use HelloFresh\Domain\Event\NewRecipeWasRegistered;
-use HelloFresh\Domain\Difficulty;
 use HelloFresh\Domain\Event\RecipeWasDeleted;
+use HelloFresh\Domain\Event\RecipeWasRated;
 use HelloFresh\Domain\Event\RecipeWasUpdated;
+use HelloFresh\Domain\Difficulty;
 use HelloFresh\Domain\Name;
 use HelloFresh\Domain\PreparationTime;
+use HelloFresh\Domain\Rate;
 use HelloFresh\Domain\Recipe;
 use HelloFresh\Domain\RecipeId;
 use PHPUnit\Framework\TestCase;
@@ -77,7 +79,7 @@ final class RecipeTest extends TestCase
             'preparation_time' => PreparationTime::fromInteger(30),
             'difficulty' => Difficulty::fromInteger(2),
             'is_vegetarian' => false,
-            'rate' => 0,
+            'rate' => 3,
         ]);
 
         $this->assertInstanceOf(Recipe::class, $recipe);
@@ -140,7 +142,7 @@ final class RecipeTest extends TestCase
             'preparation_time' => PreparationTime::fromInteger(30),
             'difficulty' => Difficulty::fromInteger(2),
             'is_vegetarian' => false,
-            'rate' => 0,
+            'rate' => 2,
         ]);
 
         $this->assertInstanceOf(Recipe::class, $recipe);
@@ -152,6 +154,33 @@ final class RecipeTest extends TestCase
         $this->assertArrayHasKey(0, $recordedEvents);
         $this->assertCount(1, $recordedEvents);
         $this->assertInstanceOf(RecipeWasDeleted::class, $recordedEvents[0]);
+
+        $recipe->clearRecordedEvents();
+        $emptyRecordedEvents = $recipe->getRecordedEvents();
+        $this->assertCount(0, $emptyRecordedEvents);
+    }
+
+    public function testRecipeCanRecordRecipeWasRatedEvent(): void
+    {
+        $recipeId = RecipeId::generate();
+        $recipe = Recipe::fromPayload([
+            'recipe_id' => $recipeId,
+            'name' => Name::fromString('Herby Pan-Seared Chicken'),
+            'preparation_time' => PreparationTime::fromInteger(30),
+            'difficulty' => Difficulty::fromInteger(2),
+            'is_vegetarian' => false,
+            'rate' => 3,
+        ]);
+
+        $this->assertInstanceOf(Recipe::class, $recipe);
+
+        $recipe->rate(Rate::fromFloat(4));
+
+        $recordedEvents = $recipe->getRecordedEvents();
+        $this->assertIsArray($recordedEvents);
+        $this->assertArrayHasKey(0, $recordedEvents);
+        $this->assertCount(1, $recordedEvents);
+        $this->assertInstanceOf(RecipeWasRated::class, $recordedEvents[0]);
 
         $recipe->clearRecordedEvents();
         $emptyRecordedEvents = $recipe->getRecordedEvents();
