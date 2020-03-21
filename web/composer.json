@@ -1,0 +1,17 @@
+{
+    "name": "hellofreshdevtests/renatoaraujo-api-test",
+    "license": "proprietary",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Renato Rodrigues de Araujo",
+            "email": "renato.r.araujo@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "HelloFresh\\": "src/"
+        }
+    }
+}
