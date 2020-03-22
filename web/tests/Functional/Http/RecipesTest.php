@@ -169,7 +169,11 @@ class RecipesTest extends TestCase
                 "preparation_time" => $newPreparationTime,
                 "difficulty" => $newDifficulty,
                 "is_vegetarian" => $isVegetarian
-            ])
+            ]),
+            'auth' => [
+                'admin',
+                'admin'
+            ]
         ]);
 
         $this->assertEquals(201, $response->getStatusCode());
@@ -185,6 +189,32 @@ class RecipesTest extends TestCase
         $this->assertSame($updatedRecipe['is_vegetarian'], $isVegetarian);
 
         return $recipeId;
+    }
+
+    /**
+     * @depends testCreateRecipeWithSuccessfulRequest
+     * @testdox Can update recipe by ID with valid payload
+     * @param string $recipeId
+     * @throws \Exception
+     */
+    public function testUpdateRecipeWithUnauthorizedRequest(string $recipeId): void
+    {
+        $newPreparationTime = \random_int(10, 100);
+        $newName = 'Herby Pan-Seared Chicken 2';
+        $newDifficulty = \random_int(1, 3);
+        $isVegetarian = false;
+
+        $response = $this->http->request('PUT', sprintf('recipes/%s', $recipeId), [
+            'body' => \json_encode([
+                "name" => $newName,
+                "preparation_time" => $newPreparationTime,
+                "difficulty" => $newDifficulty,
+                "is_vegetarian" => $isVegetarian
+            ]),
+            'http_errors' => false
+        ]);
+
+        $this->assertEquals(401, $response->getStatusCode());
     }
 
     /**

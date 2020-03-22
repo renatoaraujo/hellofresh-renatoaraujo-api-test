@@ -6,6 +6,8 @@ namespace HelloFresh\Application\Controller;
 use League\Tactician\CommandBus;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use HelloFresh\Application\Controller\Utils\PayloadCapability;
 use HelloFresh\Domain\Command\UpdateRecipe as UpdateRecipeCommand;
@@ -20,16 +22,25 @@ final class UpdateRecipe
     /** @var SerializerInterface */
     private $serializer;
 
+    /** @var TokenStorageInterface */
+    private $tokenStorage;
+
     public function __construct(
         CommandBus $commandBus,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        TokenStorageInterface $tokenStorage
     ) {
         $this->commandBus = $commandBus;
         $this->serializer = $serializer;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public function __invoke(Request $request): JsonResponse
     {
+        if (!in_array('ROLE_ADMIN', $this->tokenStorage->getToken()->getRoleNames())) {
+            throw new UnauthorizedHttpException('Basic');
+        }
+
         $id = $request->get('id');
         $requestPayload = \json_decode($request->getContent(), true);
         $this->validateRequestPayloadScope(['name', 'preparation_time', 'difficulty', 'is_vegetarian'],
