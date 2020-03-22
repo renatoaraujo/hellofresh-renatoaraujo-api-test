@@ -5,6 +5,7 @@ namespace HelloFresh\Domain\Service;
 
 use HelloFresh\Domain\Command\ListRecipes;
 use HelloFresh\Domain\Command\RegisterNewRecipe;
+use HelloFresh\Domain\Command\ViewRecipe;
 use HelloFresh\Domain\Difficulty;
 use HelloFresh\Domain\Name;
 use HelloFresh\Domain\PreparationTime;
@@ -65,5 +66,13 @@ final class RecipeService
         }
 
         return Recipe::fromPayload($payload);
+    }
+
+    public function load(ViewRecipe $command): Recipe
+    {
+        $payload = $this->repository->loadById(
+            RecipeId::fromString($command->getRecipeId())
+        );
+        return $this->getFromPayload($payload);
     }
 }

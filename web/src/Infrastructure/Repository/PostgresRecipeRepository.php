@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace HelloFresh\Infrastructure\Repository;
 
 use HelloFresh\Domain\Recipe;
+use HelloFresh\Domain\RecipeId;
 use HelloFresh\Domain\Repository\RecipeRepository;
+use HelloFresh\Infrastructure\Repository\Exception\RecipeNotFoundException;
 use PDO;
 
 final class PostgresRecipeRepository implements RecipeRepository
@@ -47,7 +49,7 @@ final class PostgresRecipeRepository implements RecipeRepository
     public function load(array $criteria = []): array
     {
         $query = 'SELECT
-          recipe.recipe_id as id,
+          recipe.recipe_id as recipe_id,
           recipe.data as data,
           coalesce(avg(value), 0) as rate
         FROM
@@ -83,10 +85,40 @@ final class PostgresRecipeRepository implements RecipeRepository
 
         foreach($records as $key => $record) {
             $loadedRecipes[$key] = \json_decode($record['data'], true);
-            $loadedRecipes[$key]['recipe_id'] = $record['id'];
+            $loadedRecipes[$key]['recipe_id'] = $record['recipe_id'];
             $loadedRecipes[$key]['rate'] = $record['rate'];
         }
 
         return $loadedRecipes;
+    }
+
+    public function loadById(RecipeId $recipeId): array
+    {
+        $query = 'SELECT
+          recipe.recipe_id as recipe_id,
+          recipe.data as data,
+          coalesce(avg(value), 0) as rate
+        FROM
+          recipe LEFT JOIN
+          rate ON rate.recipe_id = recipe.recipe_id
+        WHERE 
+          recipe.recipe_id = :recipe_id
+        GROUP BY
+          recipe.recipe_id,
+          rate.recipe_id';
+
+        $statement = $this->connection->prepare($query);
+        $statement->execute([':recipe_id' => $recipeId->__toString()]);
+        $record = $statement->fetch(\PDO::FETCH_ASSOC);
+
+        if (empty($record)) {
+            throw RecipeNotFoundException::withRecipeId($recipeId->__toString());
+        }
+
+        $payload = \json_decode($record['data'], true);
+        $payload['recipe_id'] = $record['recipe_id'];
+        $payload['rate'] = $record['rate'];
+
+        return $payload;
     }
 }
