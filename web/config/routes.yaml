@@ -1,0 +1,29 @@
+api.create_recipe:
+  path: /recipes
+  methods: [POST]
+  controller: HelloFresh\Application\Controller\CreateRecipe
+
+api.update_recipe:
+  path: /recipes/{id}
+  methods: [PUT]
+  controller: HelloFresh\Application\Controller\UpdateRecipe
+
+api.delete_recipe:
+  path: /recipes/{id}
+  methods: [DELETE]
+  controller: HelloFresh\Application\Controller\DeleteRecipe
+
+api.read_recipe:
+  path: /recipes/{id}
+  methods: [GET]
+  controller: HelloFresh\Application\Controller\ReadRecipe
+
+api.list_recipe:
+  path: /recipes
+  methods: [GET]
+  controller: HelloFresh\Application\Controller\ListRecipes
+
+api.rate_recipe:
+  path: /recipes/{id}/rating
+  methods: [POST]
+  controller: HelloFresh\Application\Controller\RateRecipe
