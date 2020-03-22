@@ -167,6 +167,35 @@ class RecipesTest extends TestCase
 
     /**
      * @depends testUpdateRecipeWithSuccessfulRequest
+     * @testdox Can rate recipe with registered ID
+     * @param string $recipeId
+     * @return string
+     * @throws \Exception
+     */
+    public function testRateRecipeByIdWithSuccessfulRequest(string $recipeId): string
+    {
+        $ratingValue = \random_int(1, 5);
+        $response = $this->http->request(
+            'POST',
+            sprintf('recipes/%s/rating', $recipeId),
+            [
+                'body' => \json_encode([
+                    'rate' => $ratingValue
+                ])
+            ]
+        );
+
+        $this->assertEquals(201, $response->getStatusCode());
+        $contentType = $response->getHeaders()["Content-Type"][0];
+        $this->assertEquals("application/json", $contentType);
+        $rate = json_decode($response->getBody()->getContents(), true);
+        $this->assertSame($rate['rate'], $ratingValue);
+
+        return $recipeId;
+    }
+
+    /**
+     * @depends testRateRecipeByIdWithSuccessfulRequest
      * @testdox Can deleted recipe with registered ID
      * @param string $recipeId
      */

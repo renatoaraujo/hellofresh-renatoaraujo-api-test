@@ -5,6 +5,7 @@ namespace HelloFresh\Domain\Service;
 
 use HelloFresh\Domain\Command\DeleteRecipe;
 use HelloFresh\Domain\Command\ListRecipes;
+use HelloFresh\Domain\Command\RateRecipe;
 use HelloFresh\Domain\Command\RegisterNewRecipe;
 use HelloFresh\Domain\Command\UpdateRecipe;
 use HelloFresh\Domain\Command\ViewRecipe;
@@ -103,5 +104,22 @@ final class RecipeService
         $recipe->delete();
 
         $this->repository->delete($recipe);
+    }
+
+    public function rate(RateRecipe $command): Rate
+    {
+        $payload = $this->repository->loadById(
+            RecipeId::fromString($command->getRecipeId())
+        );
+        $recipe = $this->getFromPayload($payload);
+
+        $rate = Rate::fromFloat($command->getRate());
+        $recipe->rate($rate);
+        $this->repository->rate($recipe, $rate);
+
+        $avgLoadedRate = $this->repository->loadRateByRecipeId($recipe->getRecipeId());
+        $avgRate = Rate::fromFloat((float) $avgLoadedRate['rate']);
+
+        return $avgRate;
     }
 }

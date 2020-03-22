@@ -6,10 +6,12 @@ namespace HelloFresh\Infrastructure\CommandBus;
 use HelloFresh\Application\Service\CreateRecipeHandler;
 use HelloFresh\Application\Service\DeleteRecipeHandler;
 use HelloFresh\Application\Service\ListRecipesHandler;
+use HelloFresh\Application\Service\RateRecipeHandler;
 use HelloFresh\Application\Service\ReadRecipeHandler;
 use HelloFresh\Application\Service\UpdateRecipeHandler;
 use HelloFresh\Domain\Command\DeleteRecipe;
 use HelloFresh\Domain\Command\ListRecipes;
+use HelloFresh\Domain\Command\RateRecipe;
 use HelloFresh\Domain\Command\UpdateRecipe;
 use HelloFresh\Domain\Command\ViewRecipe;
 use HelloFresh\Domain\Service\RecipeService;
@@ -27,6 +29,7 @@ final class TacticianCommandBusFactory
             ViewRecipe::class => new ReadRecipeHandler($service),
             UpdateRecipe::class => new UpdateRecipeHandler($service),
             DeleteRecipe::class => new DeleteRecipeHandler($service),
+            RateRecipe::class => new RateRecipeHandler($service),
         ]);
     }
 }

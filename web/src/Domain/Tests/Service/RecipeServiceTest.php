@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace HelloFresh\Domain\Tests\Service;
 
 use HelloFresh\Domain\Command\DeleteRecipe;
+use HelloFresh\Domain\Command\RateRecipe;
 use HelloFresh\Domain\Command\RegisterNewRecipe;
 use HelloFresh\Domain\Command\UpdateRecipe;
 use HelloFresh\Domain\Recipe;
@@ -79,5 +80,32 @@ final class RecipeServiceTest extends TestCase
         $service = new RecipeService($recipeRepository);
         $command = new DeleteRecipe($recipeId->__toString());
         $service->delete($command);
+    }
+
+    public function testCanRateRecipe(): void
+    {
+        $recipeId = RecipeId::generate();
+        $recipeRepository = $this->createMock(RecipeRepository::class);
+        $recipeRepository->expects($this->once())->method('rate');
+        $recipeRepository
+            ->expects($this->once())
+            ->method('loadById')
+            ->willReturn([
+                'recipe_id' => $recipeId->__toString(),
+                'name' => 'Herby Pan-Seared Chicken',
+                'preparation_time' => 30,
+                'difficulty' => 2,
+                'is_vegetarian' => false,
+                'rate' => 3,
+            ]);
+        $recipeRepository
+            ->expects($this->once())
+            ->method('loadRateByRecipeId')
+            ->willReturn([
+                'rate' => 3,
+            ]);
+        $service = new RecipeService($recipeRepository);
+        $command = new RateRecipe($recipeId->__toString(), 4);
+        $service->rate($command);
     }
 }
