@@ -13,8 +13,24 @@ services:
     arguments:
       - ['@Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer']
       - ['@Symfony\Component\Serializer\Encoder\JsonEncoder']
+  PDO:
+    class: \PDO
+    factory: ['HelloFresh\Infrastructure\Database\PDOConnectionFactory', 'build']
+    arguments:
+      - 'pgsql'
+      - '%application.database.name%'
+      - '%application.database.host%'
+      - '%application.database.user%'
+      - '%application.database.password%'
+      - '%application.database.schema%'
+  HelloFresh\Infrastructure\Repository\PostgresRecipeRepository:
+    class: HelloFresh\Infrastructure\Repository\PostgresRecipeRepository
+    arguments:
+      - '@PDO'
   HelloFresh\Domain\Service\RecipeService:
     class: HelloFresh\Domain\Service\RecipeService
+    arguments:
+      - '@HelloFresh\Infrastructure\Repository\PostgresRecipeRepository'
   League\Tactician\CommandBus:
     class: League\Tactician\CommandBus
     factory: ['HelloFresh\Infrastructure\CommandBus\TacticianCommandBusFactory', 'build']

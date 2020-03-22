@@ -158,7 +158,7 @@ final class Recipe implements \JsonSerializable
     public function getRate(): Rate
     {
         if (null === $this->rate) {
-            return Rate::fromFloat(Rate::VALUE_MIN);
+            return Rate::fromEmptyRate();
         }
 
         return $this->rate;

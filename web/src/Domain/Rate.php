@@ -33,6 +33,13 @@ final class Rate implements \JsonSerializable
         return $instance;
     }
 
+    public static function fromEmptyRate(): Rate
+    {
+        $instance = new self();
+        $instance->value = 0;
+        return $instance;
+    }
+
     public function toFloat(): float
     {
         return $this->value;

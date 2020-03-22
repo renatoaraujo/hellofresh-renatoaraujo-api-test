@@ -2,3 +2,9 @@ parameters:
   application.cors:
     allow_origin: '%env(CORS_ALLOW_ORIGIN)%'
     allow_methods: '%env(CORS_ALLOW_METHODS)%'
+
+  application.database.name: '%env(DB_NAME)%'
+  application.database.host: '%env(DB_HOST)%'
+  application.database.user: '%env(DB_USER)%'
+  application.database.password: '%env(DB_PASS)%'
+  application.database.schema: '%env(DB_SCHEMA)%'
