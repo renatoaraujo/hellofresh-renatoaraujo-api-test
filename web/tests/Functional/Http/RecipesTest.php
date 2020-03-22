@@ -16,7 +16,7 @@ use Ramsey\Uuid\Uuid;
  * In the real life I would never do this, instead I would be using fixtures or specific database
  * for testing being able to start and destroy every dependency on the beginning and at the end of
  * the execution.
- * ------------------------------------------------------------
+ * -----------------------------------------------------------
  *
  * @package Tests\Functional\Http
  */
@@ -125,5 +125,40 @@ class RecipesTest extends TestCase
             [uniqid()], // Should be an error because it's not valid UUID
             [Uuid::uuid4()->toString()] // Should be an error because it does not exists in Database
         ];
+    }
+
+    /**
+     * @depends testCreateRecipeWithSuccessfulRequest
+     * @testdox Can update recipe by ID with valid payload
+     * @param string $recipeId
+     * @throws \Exception
+     */
+    public function testUpdateRecipeWithSuccessfulRequest(string $recipeId): void
+    {
+        $newPreparationTime = \random_int(10, 100);
+        $newName = 'Herby Pan-Seared Chicken 2';
+        $newDifficulty = \random_int(1, 3);
+        $isVegetarian = false;
+
+        $response = $this->http->request('PUT', sprintf('recipes/%s', $recipeId), [
+            'body' => \json_encode([
+                "name" => $newName,
+                "preparation_time" => $newPreparationTime,
+                "difficulty" => $newDifficulty,
+                "is_vegetarian" => $isVegetarian
+            ])
+        ]);
+
+        $this->assertEquals(201, $response->getStatusCode());
+        $contentType = $response->getHeaders()["Content-Type"][0];
+        $this->assertEquals("application/json", $contentType);
+
+        $updatedRecipe = json_decode($response->getBody()->getContents(), true);
+        $recipeId = $updatedRecipe['recipe_id'];
+        $this->assertTrue(Uuid::isValid($recipeId));
+        $this->assertSame($updatedRecipe['name'], $newName);
+        $this->assertSame($updatedRecipe['preparation_time'], $newPreparationTime);
+        $this->assertSame($updatedRecipe['difficulty'], $newDifficulty);
+        $this->assertSame($updatedRecipe['is_vegetarian'], $isVegetarian);
     }
 }

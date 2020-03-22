@@ -5,6 +5,7 @@ namespace HelloFresh\Domain\Service;
 
 use HelloFresh\Domain\Command\ListRecipes;
 use HelloFresh\Domain\Command\RegisterNewRecipe;
+use HelloFresh\Domain\Command\UpdateRecipe;
 use HelloFresh\Domain\Command\ViewRecipe;
 use HelloFresh\Domain\Difficulty;
 use HelloFresh\Domain\Name;
@@ -59,11 +60,7 @@ final class RecipeService
         $payload['name'] = Name::fromString($payload['name']);
         $payload['preparation_time'] = PreparationTime::fromInteger($payload['preparation_time']);
         $payload['difficulty'] = Difficulty::fromInteger($payload['difficulty']);
-        $payload['rate'] = Rate::fromEmptyRate();
-
-        if ($payload['rate'] > 1) {
-            $payload['rate'] = Rate::fromFloat((float) $payload['rate']);
-        }
+        $payload['rate'] = ($payload['rate'] > 1) ? Rate::fromFloat((float) $payload['rate']) : Rate::fromEmptyRate();
 
         return Recipe::fromPayload($payload);
     }
@@ -74,5 +71,24 @@ final class RecipeService
             RecipeId::fromString($command->getRecipeId())
         );
         return $this->getFromPayload($payload);
+    }
+
+    public function update(UpdateRecipe $command): Recipe
+    {
+        $payload = $this->repository->loadById(
+            RecipeId::fromString($command->getRecipeId())
+        );
+        $recipe = $this->getFromPayload($payload);
+
+        $recipe->update(
+            Name::fromString($command->getName()),
+            PreparationTime::fromInteger($command->getPreparationTime()),
+            Difficulty::fromInteger($command->getDifficulty()),
+            $command->isVegetarian()
+        );
+
+        $this->repository->save($recipe);
+
+        return $recipe;
     }
 }

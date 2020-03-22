@@ -12,7 +12,7 @@ trait PayloadCapability
         $message = 'Invalid scope. Missing ou invalid parameter: "%s".';
 
         foreach ($expected as $key) {
-            if (!array_key_exists($key, $payload) || empty($payload[$key])) {
+            if (!array_key_exists($key, $payload) || !isset($payload[$key])) {
                 throw new BadRequestHttpException(sprintf($message, $key));
             }
         }

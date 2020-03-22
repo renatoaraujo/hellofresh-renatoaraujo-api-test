@@ -54,3 +54,9 @@ services:
     arguments:
       - '@League\Tactician\CommandBus'
       - '@Symfony\Component\Serializer\Serializer'
+  HelloFresh\Application\Controller\UpdateRecipe:
+    class: HelloFresh\Application\Controller\UpdateRecipe
+    public: true
+    arguments:
+      - '@League\Tactician\CommandBus'
+      - '@Symfony\Component\Serializer\Serializer'
