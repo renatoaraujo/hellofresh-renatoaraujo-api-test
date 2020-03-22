@@ -8,7 +8,8 @@ use GuzzleHttp\Client;
 use Ramsey\Uuid\Uuid;
 
 /**
- * PLEASE READ IT (before punching me :D) --------------------
+ * DISCLAIMER
+ * ----------
  * This is a basic functional tests I did in a dirty and quick way to make sure everything works,
  * and because I am not using any kind of framework to deal with database easily I will add a
  * certain order of the tests to be sure that I can test the API and it's working.
@@ -16,7 +17,10 @@ use Ramsey\Uuid\Uuid;
  * In the real life I would never do this, instead I would be using fixtures or specific database
  * for testing being able to start and destroy every dependency on the beginning and at the end of
  * the execution.
- * -----------------------------------------------------------
+ *
+ * Tests for real that I would be proud using in real life is inside of the Domain!
+ * Check: web/src/Domain/Tests
+ * ----------
  *
  * @package Tests\Functional\Http
  */
