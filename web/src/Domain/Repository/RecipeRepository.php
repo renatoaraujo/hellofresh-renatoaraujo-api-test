@@ -8,4 +8,6 @@ use HelloFresh\Domain\Recipe;
 interface RecipeRepository
 {
     public function save(Recipe $recipe): void;
+
+    public function load(array $criteria = []): array;
 }
