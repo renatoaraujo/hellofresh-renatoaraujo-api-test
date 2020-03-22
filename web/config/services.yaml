@@ -75,6 +75,7 @@ services:
     public: true
     arguments:
       - '@League\Tactician\CommandBus'
+      - '@Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface'
   HelloFresh\Application\Controller\RateRecipe:
     class: HelloFresh\Application\Controller\RateRecipe
     public: true

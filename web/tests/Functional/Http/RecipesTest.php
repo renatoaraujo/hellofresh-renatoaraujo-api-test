@@ -41,18 +41,22 @@ class RecipesTest extends TestCase
      */
     public function testCreateRecipeWithSuccessfulRequest(): string
     {
-        $response = $this->http->request('POST', 'recipes', [
-            'body' => \json_encode([
-                "name" => "Herby Pan-Seared Chicken",
-                "preparation_time" => 30,
-                "difficulty" => 2,
-                "is_vegetarian" => true
-            ]),
-            'auth' => [
-                'admin',
-                'admin'
+        $response = $this->http->request(
+            'POST',
+            'recipes',
+            [
+                'body' => \json_encode([
+                    "name" => "Herby Pan-Seared Chicken",
+                    "preparation_time" => 30,
+                    "difficulty" => 2,
+                    "is_vegetarian" => true
+                ]),
+                'auth' => [
+                    'admin',
+                    'admin'
+                ]
             ]
-        ]);
+        );
 
         $this->assertEquals(201, $response->getStatusCode());
         $contentType = $response->getHeaders()["Content-Type"][0];
@@ -70,15 +74,19 @@ class RecipesTest extends TestCase
      */
     public function testCreateRecipeWithUnauthorizedRequest(): void
     {
-        $response = $this->http->request('POST', 'recipes', [
-            'body' => \json_encode([
-                "name" => "Herby Pan-Seared Chicken",
-                "preparation_time" => 30,
-                "difficulty" => 2,
-                "is_vegetarian" => true
-            ]),
-            'http_errors' => false
-        ]);
+        $response = $this->http->request(
+            'POST',
+            'recipes',
+            [
+                'body' => \json_encode([
+                    "name" => "Herby Pan-Seared Chicken",
+                    "preparation_time" => 30,
+                    "difficulty" => 2,
+                    "is_vegetarian" => true
+                ]),
+                'http_errors' => false
+            ]
+        );
 
         $this->assertEquals(401, $response->getStatusCode());
     }
@@ -163,18 +171,22 @@ class RecipesTest extends TestCase
         $newDifficulty = \random_int(1, 3);
         $isVegetarian = false;
 
-        $response = $this->http->request('PUT', sprintf('recipes/%s', $recipeId), [
-            'body' => \json_encode([
-                "name" => $newName,
-                "preparation_time" => $newPreparationTime,
-                "difficulty" => $newDifficulty,
-                "is_vegetarian" => $isVegetarian
-            ]),
-            'auth' => [
-                'admin',
-                'admin'
+        $response = $this->http->request(
+            'PUT',
+            sprintf('recipes/%s', $recipeId),
+            [
+                'body' => \json_encode([
+                    "name" => $newName,
+                    "preparation_time" => $newPreparationTime,
+                    "difficulty" => $newDifficulty,
+                    "is_vegetarian" => $isVegetarian
+                ]),
+                'auth' => [
+                    'admin',
+                    'admin'
+                ]
             ]
-        ]);
+        );
 
         $this->assertEquals(201, $response->getStatusCode());
         $contentType = $response->getHeaders()["Content-Type"][0];
@@ -199,20 +211,14 @@ class RecipesTest extends TestCase
      */
     public function testUpdateRecipeWithUnauthorizedRequest(string $recipeId): void
     {
-        $newPreparationTime = \random_int(10, 100);
-        $newName = 'Herby Pan-Seared Chicken 2';
-        $newDifficulty = \random_int(1, 3);
-        $isVegetarian = false;
-
-        $response = $this->http->request('PUT', sprintf('recipes/%s', $recipeId), [
-            'body' => \json_encode([
-                "name" => $newName,
-                "preparation_time" => $newPreparationTime,
-                "difficulty" => $newDifficulty,
-                "is_vegetarian" => $isVegetarian
-            ]),
-            'http_errors' => false
-        ]);
+        $response = $this->http->request(
+            'PUT',
+            sprintf('recipes/%s', $recipeId),
+            [
+                'body' => \json_encode([]),
+                'http_errors' => false
+            ]
+        );
 
         $this->assertEquals(401, $response->getStatusCode());
     }
@@ -255,9 +261,31 @@ class RecipesTest extends TestCase
     {
         $response = $this->http->request(
             'DELETE',
-            sprintf('recipes/%s', $recipeId)
+            sprintf('recipes/%s', $recipeId),
+            [
+                'auth' => [
+                    'admin',
+                    'admin'
+                ]
+            ]
         );
 
         $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    /**
+     * @testdox Can deleted recipe with registered ID
+     */
+    public function testDeleteRecipeByIdWithUnauthorizedRequest(): void
+    {
+        $response = $this->http->request(
+            'DELETE',
+            sprintf('recipes/%s', Uuid::uuid4()->toString()),
+            [
+                'http_errors' => false
+            ]
+        );
+
+        $this->assertEquals(401, $response->getStatusCode());
     }
 }
