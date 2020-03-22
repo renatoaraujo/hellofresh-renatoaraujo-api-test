@@ -17,19 +17,31 @@ use HelloFresh\Domain\Command\ViewRecipe;
 use HelloFresh\Domain\Service\RecipeService;
 use HelloFresh\Domain\Command\RegisterNewRecipe;
 use League\Tactician\CommandBus;
-use League\Tactician\Setup\QuickStart;
+use League\Tactician\Handler\CommandHandlerMiddleware;
+use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
+use League\Tactician\Handler\Locator\InMemoryLocator;
+use League\Tactician\Handler\MethodNameInflector\HandleInflector;
+use League\Tactician\Plugins\LockingMiddleware;
 
 final class TacticianCommandBusFactory
 {
     public static function build(RecipeService $service): CommandBus
     {
-        return QuickStart::create([
-            RegisterNewRecipe::class => new CreateRecipeHandler($service),
-            ListRecipes::class => new ListRecipesHandler($service),
-            ViewRecipe::class => new ReadRecipeHandler($service),
-            UpdateRecipe::class => new UpdateRecipeHandler($service),
-            DeleteRecipe::class => new DeleteRecipeHandler($service),
-            RateRecipe::class => new RateRecipeHandler($service),
-        ]);
+        $handlerMiddleware = new CommandHandlerMiddleware(
+            new ClassNameExtractor(),
+            new InMemoryLocator([
+                RegisterNewRecipe::class => new CreateRecipeHandler($service),
+                ListRecipes::class => new ListRecipesHandler($service),
+                ViewRecipe::class => new ReadRecipeHandler($service),
+                UpdateRecipe::class => new UpdateRecipeHandler($service),
+                DeleteRecipe::class => new DeleteRecipeHandler($service),
+                RateRecipe::class => new RateRecipeHandler($service),
+            ]),
+            new HandleInflector()
+        );
+
+        $lockingMiddleware = new LockingMiddleware();
+
+        return new CommandBus([$lockingMiddleware, $handlerMiddleware]);
     }
 }

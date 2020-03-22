@@ -17,6 +17,10 @@ shutdown:
 vendor:
 	docker-compose exec php composer install -d ./web
 
+.PHONY: update-vendor
+update-vendor:
+	docker-compose exec php composer update -d ./web
+
 .PHONY: test
 test:
 	docker-compose exec php ./web/bin/phpunit --configuration ./web/phpunit.xml
