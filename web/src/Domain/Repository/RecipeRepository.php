@@ -13,4 +13,6 @@ interface RecipeRepository
     public function load(array $criteria = []): array;
 
     public function loadById(RecipeId $recipeId): array;
+
+    public function delete(Recipe $recipe): void;
 }

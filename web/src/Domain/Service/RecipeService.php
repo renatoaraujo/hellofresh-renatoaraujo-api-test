@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace HelloFresh\Domain\Service;
 
+use HelloFresh\Domain\Command\DeleteRecipe;
 use HelloFresh\Domain\Command\ListRecipes;
 use HelloFresh\Domain\Command\RegisterNewRecipe;
 use HelloFresh\Domain\Command\UpdateRecipe;
@@ -90,5 +91,17 @@ final class RecipeService
         $this->repository->save($recipe);
 
         return $recipe;
+    }
+
+    public function delete(DeleteRecipe $command): void
+    {
+        $payload = $this->repository->loadById(
+            RecipeId::fromString($command->getRecipeId())
+        );
+
+        $recipe = $this->getFromPayload($payload);
+        $recipe->delete();
+
+        $this->repository->delete($recipe);
     }
 }

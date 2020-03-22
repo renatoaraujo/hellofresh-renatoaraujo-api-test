@@ -65,7 +65,7 @@ final class PostgresRecipeRepository implements RecipeRepository
 
         if (!empty($criteria)) {
             $clauses = [];
-            array_walk($criteria, function($value, $column) use (&$clauses) {
+            array_walk($criteria, function ($value, $column) use (&$clauses) {
                 if ('name' != $column) {
                     return;
                 }
@@ -83,7 +83,7 @@ final class PostgresRecipeRepository implements RecipeRepository
 
         $loadedRecipes = [];
 
-        foreach($records as $key => $record) {
+        foreach ($records as $key => $record) {
             $loadedRecipes[$key] = \json_decode($record['data'], true);
             $loadedRecipes[$key]['recipe_id'] = $record['recipe_id'];
             $loadedRecipes[$key]['rate'] = $record['rate'];
@@ -120,5 +120,11 @@ final class PostgresRecipeRepository implements RecipeRepository
         $payload['rate'] = $record['rate'];
 
         return $payload;
+    }
+
+    public function delete(Recipe $recipe): void
+    {
+        $statement = $this->connection->prepare('DELETE FROM recipe WHERE recipe_id = :recipe_id');
+        $statement->execute(['recipe_id' => $recipe->getRecipeId()->__toString()]);
     }
 }

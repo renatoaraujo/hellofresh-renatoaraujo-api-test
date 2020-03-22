@@ -131,9 +131,10 @@ class RecipesTest extends TestCase
      * @depends testCreateRecipeWithSuccessfulRequest
      * @testdox Can update recipe by ID with valid payload
      * @param string $recipeId
+     * @return string
      * @throws \Exception
      */
-    public function testUpdateRecipeWithSuccessfulRequest(string $recipeId): void
+    public function testUpdateRecipeWithSuccessfulRequest(string $recipeId): string
     {
         $newPreparationTime = \random_int(10, 100);
         $newName = 'Herby Pan-Seared Chicken 2';
@@ -160,5 +161,22 @@ class RecipesTest extends TestCase
         $this->assertSame($updatedRecipe['preparation_time'], $newPreparationTime);
         $this->assertSame($updatedRecipe['difficulty'], $newDifficulty);
         $this->assertSame($updatedRecipe['is_vegetarian'], $isVegetarian);
+
+        return $recipeId;
+    }
+
+    /**
+     * @depends testUpdateRecipeWithSuccessfulRequest
+     * @testdox Can deleted recipe with registered ID
+     * @param string $recipeId
+     */
+    public function testDeleteRecipeByIdWithSuccessfulRequest(string $recipeId): void
+    {
+        $response = $this->http->request(
+            'DELETE',
+            sprintf('recipes/%s', $recipeId)
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }
