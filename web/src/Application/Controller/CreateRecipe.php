@@ -8,6 +8,8 @@ use HelloFresh\Domain\Command\RegisterNewRecipe;
 use League\Tactician\CommandBus;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class CreateRecipe
@@ -20,16 +22,25 @@ class CreateRecipe
     /** @var SerializerInterface */
     private $serializer;
 
+    /** @var TokenStorageInterface */
+    private $tokenStorage;
+
     public function __construct(
         CommandBus $commandBus,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        TokenStorageInterface $tokenStorage
     ) {
         $this->commandBus = $commandBus;
         $this->serializer = $serializer;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public function __invoke(Request $request): JsonResponse
     {
+        if (!in_array('ROLE_ADMIN', $this->tokenStorage->getToken()->getRoleNames())) {
+            throw new UnauthorizedHttpException('Basic');
+        }
+
         $requestPayload = \json_decode($request->getContent(), true);
         $this->validateRequestPayloadScope(['name', 'preparation_time', 'difficulty', 'is_vegetarian'], $requestPayload);
 

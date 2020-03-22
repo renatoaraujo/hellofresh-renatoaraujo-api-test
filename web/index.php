@@ -15,6 +15,7 @@ use Symfony\Component\Config\FileLocator;
 use HelloFresh\RuntimeContext;
 use HelloFresh\Infrastructure\Subscriber\ExceptionSubscriber;
 use HelloFresh\Infrastructure\Subscriber\CorsSubscriber;
+use HelloFresh\Infrastructure\Subscriber\SecuritySubscriber;
 
 require_once __DIR__ . '/src/bootstrap.php';
 
@@ -29,6 +30,10 @@ $dispatcher = new EventDispatcher();
 $dispatcher->addSubscriber(new RouterListener($matcher, new RequestStack()));
 $dispatcher->addSubscriber(new ExceptionSubscriber());
 $dispatcher->addSubscriber(new CorsSubscriber(RuntimeContext::getContainer()->getParameter('application.cors')));
+$dispatcher->addSubscriber(new SecuritySubscriber(
+    RuntimeContext::getContainer()->get('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface'),
+    RuntimeContext::getContainer()->get('Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface')
+));
 
 $controllerResolver = new ContainerControllerResolver(RuntimeContext::getContainer());
 $argumentResolver = new ArgumentResolver();

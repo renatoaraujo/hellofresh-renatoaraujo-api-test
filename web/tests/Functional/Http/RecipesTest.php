@@ -47,7 +47,11 @@ class RecipesTest extends TestCase
                 "preparation_time" => 30,
                 "difficulty" => 2,
                 "is_vegetarian" => true
-            ])
+            ]),
+            'auth' => [
+                'admin',
+                'admin'
+            ]
         ]);
 
         $this->assertEquals(201, $response->getStatusCode());
@@ -59,6 +63,24 @@ class RecipesTest extends TestCase
         $this->assertTrue(Uuid::isValid($recipeId));
 
         return $recipeId;
+    }
+
+    /**
+     * @testdox Can't create a new recipe with unauthorized request
+     */
+    public function testCreateRecipeWithUnauthorizedRequest(): void
+    {
+        $response = $this->http->request('POST', 'recipes', [
+            'body' => \json_encode([
+                "name" => "Herby Pan-Seared Chicken",
+                "preparation_time" => 30,
+                "difficulty" => 2,
+                "is_vegetarian" => true
+            ]),
+            'http_errors' => false
+        ]);
+
+        $this->assertEquals(401, $response->getStatusCode());
     }
 
     /**
