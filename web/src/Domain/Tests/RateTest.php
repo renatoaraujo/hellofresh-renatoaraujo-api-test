@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace HelloFresh\Domain\Tests;
 
+use HelloFresh\Domain\Exception\OutOfRangeRateException;
 use HelloFresh\Domain\Rate;
 use PHPUnit\Framework\TestCase;
 
@@ -20,11 +21,13 @@ final class RateTest extends TestCase
 
     /**
      * @dataProvider invalidRangeValueProvider
-     * @expectedException \HelloFresh\Domain\Exception\OutOfRangeRateException
      * @testdox Can't rate with $rate
+     *
+     * @param float $rate
      */
     public function testCantRateWithOutOfRangeValues(float $rate): void
     {
+        $this->expectException(OutOfRangeRateException::class);
         Rate::fromFloat($rate);
     }
 

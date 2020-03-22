@@ -19,4 +19,4 @@ vendor:
 
 .PHONY: test
 test:
-	docker-compose exec php ./web/bin/phpunit --bootstrap ./web/vendor/autoload.php --testdox web/src/Domain/Tests
+	docker-compose exec php ./web/bin/phpunit --configuration ./web/phpunit.xml

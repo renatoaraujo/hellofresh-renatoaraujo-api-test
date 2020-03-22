@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace HelloFresh\Domain\Tests;
 
+use HelloFresh\Domain\Exception\NameCannotBeEmptyException;
 use HelloFresh\Domain\Name;
 use PHPUnit\Framework\TestCase;
 
@@ -16,11 +17,11 @@ final class NameTest extends TestCase
     }
 
     /**
-     * @expectedException \HelloFresh\Domain\Exception\NameCannotBeEmptyException
      * @testdox Can't create name with empty value
      */
     public function testCantCreateNameWithEmptyValue(): void
     {
+        $this->expectException(NameCannotBeEmptyException::class);
         Name::fromString('');
     }
 }

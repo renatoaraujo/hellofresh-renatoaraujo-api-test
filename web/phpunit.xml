@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="vendor/autoload.php"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true">
+    <testsuites>
+        <testsuite name="Domain Test Suite">
+            <directory suffix=".php">./src/Domain/Tests/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src/Domain/</directory>
+            <exclude>
+                <directory suffix=".php">./src/Domain/Tests/</directory>
+                <directory suffix=".php">./src/Domain/Exception/</directory>
+                <directory suffix=".php">./src/Domain/Event/</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false" showCoveredFiles="false"/>
+        <log type="testdox-text" target="php://stdout"/>
+    </logging>
+</phpunit>

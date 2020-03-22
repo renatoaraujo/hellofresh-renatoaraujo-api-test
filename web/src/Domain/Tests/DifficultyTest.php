@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace HelloFresh\Domain\Tests;
 
 use HelloFresh\Domain\Difficulty;
+use HelloFresh\Domain\Exception\OutOfRangeDifficultyLevelException;
 use PHPUnit\Framework\TestCase;
 
 final class DifficultyTest extends TestCase
@@ -22,13 +23,13 @@ final class DifficultyTest extends TestCase
 
     /**
      * @dataProvider outOfRangeLevelsProvider
-     * @expectedException \HelloFresh\Domain\Exception\OutOfRangeDifficultyLevelException
      * @testdox Can't create difficulty level with $outOfRangeValue
      *
      * @param int $outOfRangeValue
      */
     public function testCantCreateFromOutOfRangeLevels(int $outOfRangeValue): void
     {
+        $this->expectException(OutOfRangeDifficultyLevelException::class);
         Difficulty::fromInteger($outOfRangeValue);
     }
 

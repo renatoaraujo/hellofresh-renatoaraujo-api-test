@@ -1,2 +1,4 @@
 .idea
 web/vendor
+web/bin/*
+/web/.phpunit.result.cache

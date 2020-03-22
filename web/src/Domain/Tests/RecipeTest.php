@@ -34,14 +34,7 @@ final class RecipeTest extends TestCase
         $this->assertCount(1, $recordedEvents);
         $this->assertInstanceOf(NewRecipeWasRegistered::class, $recordedEvents[0]);
 
-        /** @var NewRecipeWasRegistered $event */
-        $event = $recordedEvents[0];
-
-        $this->assertSame($event->recipeId(), $recipe->getRecipeId());
-        $this->assertSame($event->name(), $recipe->getName());
-        $this->assertSame($event->preparationTime(), $recipe->getPreparationTime());
-        $this->assertSame($event->difficulty(), $recipe->getDifficulty());
-        $this->assertSame($event->isVegetarian(), $recipe->isVegetarian());
+        $this->assertRecipeFromFirstEvent($recipe);
 
         $recipe->clearRecordedEvents();
         $emptyRecordedEvents = $recipe->getRecordedEvents();
@@ -58,13 +51,7 @@ final class RecipeTest extends TestCase
             'is_vegetarian' => false,
         ]);
 
-        $recipe = Recipe::fromEvent($event);
-
-        $this->assertSame($event->recipeId(), $recipe->getRecipeId());
-        $this->assertSame($event->name(), $recipe->getName());
-        $this->assertSame($event->preparationTime(), $recipe->getPreparationTime());
-        $this->assertSame($event->difficulty(), $recipe->getDifficulty());
-        $this->assertSame($event->isVegetarian(), $recipe->isVegetarian());
+        $recipe = $this->getAndAssertRecipeFromEvent($event);
 
         $recordedEvents = $recipe->getRecordedEvents();
         $this->assertCount(0, $recordedEvents);
@@ -96,15 +83,7 @@ final class RecipeTest extends TestCase
         $this->assertArrayHasKey(0, $recordedEvents);
         $this->assertCount(1, $recordedEvents);
         $this->assertInstanceOf(RecipeWasUpdated::class, $recordedEvents[0]);
-
-        /** @var RecipeWasUpdated $event */
-        $event = $recordedEvents[0];
-
-        $this->assertSame($event->recipeId(), $recipe->getRecipeId());
-        $this->assertSame($event->name(), $recipe->getName());
-        $this->assertSame($event->preparationTime(), $recipe->getPreparationTime());
-        $this->assertSame($event->difficulty(), $recipe->getDifficulty());
-        $this->assertSame($event->isVegetarian(), $recipe->isVegetarian());
+        $this->assertRecipeFromFirstEvent($recipe);
 
         $recipe->clearRecordedEvents();
         $emptyRecordedEvents = $recipe->getRecordedEvents();
@@ -121,14 +100,7 @@ final class RecipeTest extends TestCase
             'is_vegetarian' => false,
         ]);
 
-        $recipe = Recipe::fromEvent($event);
-
-        $this->assertSame($event->recipeId(), $recipe->getRecipeId());
-        $this->assertSame($event->name(), $recipe->getName());
-        $this->assertSame($event->preparationTime(), $recipe->getPreparationTime());
-        $this->assertSame($event->difficulty(), $recipe->getDifficulty());
-        $this->assertSame($event->isVegetarian(), $recipe->isVegetarian());
-
+        $recipe = $this->getAndAssertRecipeFromEvent($event);
         $recordedEvents = $recipe->getRecordedEvents();
         $this->assertCount(0, $recordedEvents);
     }
@@ -185,5 +157,29 @@ final class RecipeTest extends TestCase
         $recipe->clearRecordedEvents();
         $emptyRecordedEvents = $recipe->getRecordedEvents();
         $this->assertCount(0, $emptyRecordedEvents);
+    }
+
+    private function getAndAssertRecipeFromEvent($event)
+    {
+        $recipe = Recipe::fromEvent($event);
+
+        $this->assertSame($event->recipeId(), $recipe->getRecipeId());
+        $this->assertSame($event->name(), $recipe->getName());
+        $this->assertSame($event->preparationTime(), $recipe->getPreparationTime());
+        $this->assertSame($event->difficulty(), $recipe->getDifficulty());
+        $this->assertSame($event->isVegetarian(), $recipe->isVegetarian());
+
+        return $recipe;
+    }
+
+    private function assertRecipeFromFirstEvent(Recipe $recipe)
+    {
+        $event = $recipe->getRecordedEvents()[0];
+
+        $this->assertSame($event->recipeId(), $recipe->getRecipeId());
+        $this->assertSame($event->name(), $recipe->getName());
+        $this->assertSame($event->preparationTime(), $recipe->getPreparationTime());
+        $this->assertSame($event->difficulty(), $recipe->getDifficulty());
+        $this->assertSame($event->isVegetarian(), $recipe->isVegetarian());
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace HelloFresh\Domain\Tests;
 
+use HelloFresh\Domain\Exception\InvalidUuidStringException;
 use HelloFresh\Domain\RecipeId;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
@@ -20,13 +21,13 @@ final class RecipeIdTest extends TestCase
 
     /**
      * @dataProvider invalidUuidProvider
-     * @expectedException \HelloFresh\Domain\Exception\InvalidUuidStringException
      * @testdox Can't create RecipeId with $invalidUuid
      *
      * @param string $invalidUuid
      */
     public function testCantCreateFromInvalidUuidString(string $invalidUuid): void
     {
+        $this->expectException(InvalidUuidStringException::class);
         RecipeId::fromString($invalidUuid);
     }
 

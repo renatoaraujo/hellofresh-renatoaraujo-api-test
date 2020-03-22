@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace HelloFresh\Domain\Tests;
 
+use HelloFresh\Domain\Exception\NegativeMinutesNotAllowedException;
 use HelloFresh\Domain\PreparationTime;
 use PHPUnit\Framework\TestCase;
 
@@ -23,13 +24,13 @@ final class PreparationTimeTest extends TestCase
 
     /**
      * @dataProvider negativeMinutesProvider
-     * @expectedException \HelloFresh\Domain\Exception\NegativeMinutesNotAllowedException
      * @testdox Can't create PreparationTime with $negativeNumber minutes
      *
      * @param int $negativeNumber
      */
     public function testCantCreatePreparationTimeFromMinutesIntegerWithNegativeNumbers(int $negativeNumber): void
     {
+        $this->expectException(NegativeMinutesNotAllowedException::class);
         PreparationTime::fromInteger($negativeNumber);
     }
 
