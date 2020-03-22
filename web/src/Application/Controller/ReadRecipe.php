@@ -6,6 +6,7 @@ namespace HelloFresh\Application\Controller;
 use League\Tactician\CommandBus;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 use HelloFresh\Domain\Command\ViewRecipe;
 
@@ -25,11 +26,15 @@ final class ReadRecipe
 
     public function __invoke(Request $request): JsonResponse
     {
-        $command = new ViewRecipe($request->get('id'));
+        try {
+            $command = new ViewRecipe($request->get('id'));
+            $recipe = $this->commandBus->handle($command);
+            $serialized = $this->serializer->serialize($recipe, 'json');
+            $statusCode = JsonResponse::HTTP_OK;
 
-        $recipe = $this->commandBus->handle($command);
-        $serialized = $this->serializer->serialize($recipe, 'json');
-
-        return new JsonResponse($serialized, JsonResponse::HTTP_OK, ['Content-Type' => 'application/json'], true);
+            return new JsonResponse($serialized, $statusCode, ['Content-Type' => 'application/json'], true);
+        } catch (\Exception $e) {
+            throw new NotFoundHttpException($e->getMessage());
+        }
     }
 }

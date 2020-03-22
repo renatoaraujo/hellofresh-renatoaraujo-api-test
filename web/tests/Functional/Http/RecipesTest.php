@@ -35,6 +35,10 @@ class RecipesTest extends TestCase
         $this->http = null;
     }
 
+    /**
+     * @testdox Can create a new recipe with parameters
+     * @return string
+     */
     public function testCreateRecipeWithSuccessfulRequest(): string
     {
         $response = $this->http->request('POST', 'recipes', [
@@ -57,6 +61,9 @@ class RecipesTest extends TestCase
         return $recipeId;
     }
 
+    /**
+     * @testdox Can list all registered recipes
+     */
     public function testListRecipesWithSuccessfulRequest(): void
     {
         $response = $this->http->request('GET', 'recipes');
@@ -75,6 +82,7 @@ class RecipesTest extends TestCase
 
     /**
      * @depends testCreateRecipeWithSuccessfulRequest
+     * @testdox Can read recipe with registered ID
      * @param string $recipeId
      */
     public function testReadRecipeByIdWithSuccessfulRequest(string $recipeId): void
@@ -91,5 +99,31 @@ class RecipesTest extends TestCase
         $recipe = json_decode($response->getBody()->getContents(), true);
         $this->assertIsArray($recipe);
         $this->assertSame($recipeId, $recipe['recipe_id']);
+    }
+
+    /**
+     * @dataProvider invalidIdProvider
+     * @testdox Can't find recipe with random or unregistered ID: $randomString
+     * @param string $randomString
+     */
+    public function testNotFoundRecipeWithId(string $randomString)
+    {
+        $response = $this->http->request(
+            'GET',
+            sprintf('recipes/%s', $randomString),
+            [
+                'http_errors' => false
+            ]
+        );
+
+        $this->assertEquals(404, $response->getStatusCode());
+    }
+
+    public function invalidIdProvider(): array
+    {
+        return [
+            [uniqid()], // Should be an error because it's not valid UUID
+            [Uuid::uuid4()->toString()] // Should be an error because it does not exists in Database
+        ];
     }
 }
