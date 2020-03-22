@@ -8,7 +8,7 @@ use HelloFresh\Domain\Event\RecipeWasDeleted;
 use HelloFresh\Domain\Event\RecipeWasRated;
 use HelloFresh\Domain\Event\RecipeWasUpdated;
 
-final class Recipe
+final class Recipe implements \JsonSerializable
 {
     use RecordEventCapability;
 
@@ -162,5 +162,17 @@ final class Recipe
         }
 
         return $this->rate;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'recipe_id' => $this->getRecipeId()->__toString(),
+            'name' => $this->getName()->__toString(),
+            'preparation_time' => $this->getPreparationTime()->toMinutesInteger(),
+            'difficulty' => $this->getDifficulty()->toInteger(),
+            'is_vegetarian' => $this->isVegetarian(),
+            'rate' => $this->getRate()->toFloat()
+        ];
     }
 }

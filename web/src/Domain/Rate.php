@@ -5,7 +5,7 @@ namespace HelloFresh\Domain;
 
 use HelloFresh\Domain\Exception\OutOfRangeRateException;
 
-final class Rate
+final class Rate implements \JsonSerializable
 {
     /** @var int */
     const VALUE_MIN = 1;
@@ -36,5 +36,10 @@ final class Rate
     public function toFloat(): float
     {
         return $this->value;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return ['rate' => $this->value];
     }
 }
