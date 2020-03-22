@@ -1,0 +1,28 @@
+imports:
+  - { resource: parameters.yaml }
+
+services:
+  Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer:
+    class: Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer
+  Symfony\Component\Serializer\Normalizer\ObjectNormalizer:
+    class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
+  Symfony\Component\Serializer\Encoder\JsonEncoder:
+    class: Symfony\Component\Serializer\Encoder\JsonEncoder
+  Symfony\Component\Serializer\Serializer:
+    class: Symfony\Component\Serializer\Serializer
+    arguments:
+      - ['@Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer']
+      - ['@Symfony\Component\Serializer\Encoder\JsonEncoder']
+  HelloFresh\Domain\Service\RecipeService:
+    class: HelloFresh\Domain\Service\RecipeService
+  League\Tactician\CommandBus:
+    class: League\Tactician\CommandBus
+    factory: ['HelloFresh\Infrastructure\CommandBus\TacticianCommandBusFactory', 'build']
+    arguments:
+      - '@HelloFresh\Domain\Service\RecipeService'
+  HelloFresh\Application\Controller\CreateRecipe:
+    class: HelloFresh\Application\Controller\CreateRecipe
+    public: true
+    arguments:
+      - '@League\Tactician\CommandBus'
+      - '@Symfony\Component\Serializer\Serializer'

@@ -1,0 +1,4 @@
+parameters:
+  application.cors:
+    allow_origin: '%env(CORS_ALLOW_ORIGIN)%'
+    allow_methods: '%env(CORS_ALLOW_METHODS)%'

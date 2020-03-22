@@ -7,6 +7,9 @@
         <testsuite name="Domain Test Suite">
             <directory suffix=".php">./src/Domain/Tests/</directory>
         </testsuite>
+        <testsuite name="Functional API Test Suite">
+            <directory suffix=".php">./tests/</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
@@ -19,7 +22,7 @@
         </whitelist>
     </filter>
     <logging>
-        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false" showCoveredFiles="false"/>
+        <log type="coverage-text" target="./var/coverage/coverage.txt" showUncoveredFiles="false"/>
         <log type="testdox-text" target="php://stdout"/>
     </logging>
 </phpunit>
